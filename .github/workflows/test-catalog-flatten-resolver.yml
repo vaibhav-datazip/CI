@@ -1,4 +1,4 @@
-name: Catalog Flatten and Resolver Tests
+name: Catalog, Flatten and Resolver Tests
 
 on:
   push:
@@ -10,7 +10,7 @@ on:
 
 jobs:
   catalog-flatten-resolver-tests:
-    name: Run Catalog and TypeUtils Tests
+    name: Run Catalog, Flatten and Resolver Tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
