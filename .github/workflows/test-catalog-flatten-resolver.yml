@@ -1,4 +1,4 @@
-name: Catalog and TypeUtils Tests
+name: Catalog, Flatten, and Resolver Tests
 
 on:
   push:
@@ -7,22 +7,13 @@ on:
   pull_request:
     branches:
       - "staging"
-  workflow_dispatch:
-    inputs:
-      logLevel:
-        description: "Log level"
-        required: true
-        default: "warning"
 
 jobs:
   catalog-typeutils-tests:
     name: Run Catalog and TypeUtils Tests
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
         uses: actions/checkout@v3
-      
-      - name: Set up Go
         uses: actions/setup-go@v3
         with:
           check-latest: "true"
@@ -32,7 +23,7 @@ jobs:
         run: go test -v ./types -run TestGetWrappedCatalog
       
       - name: Run Flatten Test
-        run: go test -v ./typeutils -run "TestFlattener"
+        run: go test -v ./typeutils -run "TestFlatten|TestFlattenSchema"
       
-      - name: Run Resolve Test
-        run: go test -v ./typeutils -run "TestResolve" 
+      - name: Run Resolver Test
+        run: go test -v ./typeutils -run "TestResolver"
