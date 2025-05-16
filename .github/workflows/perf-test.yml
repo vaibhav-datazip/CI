@@ -12,7 +12,7 @@ on:
 
 jobs:
   performance-test:
-    if: github.base_ref == 'main' && github.head_ref == 'staging'
+    if: github.base_ref == 'master' && github.head_ref == 'staging'
     runs-on: ubuntu-latest
 
     steps:
