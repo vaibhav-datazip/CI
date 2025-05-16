@@ -7,13 +7,9 @@ on:
   pull_request:
     branches:
       - staging
-    paths:
-      - '**'
-    types: [opened, synchronize, reopened, edited]
 
 jobs:
   catalog-flatten-resolver-tests:
-    if: github.base_ref == 'staging'
     name: Run Catalog and TypeUtils Tests
     runs-on: ubuntu-latest
     steps:
