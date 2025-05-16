@@ -27,3 +27,5 @@ jobs:
       
       - name: Run Resolver Test
         run: go test -v ./typeutils -run "TestResolver"
+
+        # test1
