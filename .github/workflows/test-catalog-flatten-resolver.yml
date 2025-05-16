@@ -3,13 +3,17 @@ name: Catalog, Flatten, and Resolver Tests
 on:
   push:
     branches:
-      - "staging"
+      - staging
   pull_request:
     branches:
-      - "staging"
+      - staging
+    paths:
+      - '**'
+    types: [opened, synchronize, reopened, edited]
 
 jobs:
   catalog-flatten-resolver-tests:
+    if: github.base.ref == 'staging'
     name: Run Catalog and TypeUtils Tests
     runs-on: ubuntu-latest
     steps:
