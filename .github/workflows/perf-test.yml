@@ -8,7 +8,7 @@ on:
      - '**'
     types: [opened, synchronize, reopened]
 
-  # check 1
+  # check 2
 
 jobs:
   performance-test:
