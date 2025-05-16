@@ -3,7 +3,7 @@ name: Performance Test Postgres
 on:
   pull_request:
     branches: 
-     - main
+     - master
     paths:
      - '**'
     types: [opened, synchronize, reopened]
