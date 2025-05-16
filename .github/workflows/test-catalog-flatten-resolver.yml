@@ -9,15 +9,15 @@ on:
       - "staging"
 
 jobs:
-  catalog-typeutils-tests:
+  catalog-flatten-resolver-tests:
     name: Run Catalog and TypeUtils Tests
     runs-on: ubuntu-latest
     steps:
-        uses: actions/checkout@v3
-        uses: actions/setup-go@v3
-        with:
-          check-latest: "true"
-          go-version: "1.23.x"
+        - uses: actions/checkout@v3
+        - uses: actions/setup-go@v3
+          with:
+            check-latest: "true"
+            go-version: "1.23.x"
       
       - name: Run Catalog Test
         run: go test -v ./types -run TestGetWrappedCatalog
