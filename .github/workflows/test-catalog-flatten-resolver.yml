@@ -61,13 +61,6 @@ jobs:
             exit 1
           fi
 
-      - name: Setup Go Environment
-        run: |
-          echo "GOPATH=$GITHUB_WORKSPACE/olake/go" >> $GITHUB_ENV
-          echo "GOBIN=$GITHUB_WORKSPACE/olake/go/bin" >> $GITHUB_ENV
-          echo "GOMOD=$GITHUB_WORKSPACE/olake/go.mod" >> $GITHUB_ENV
-          echo "GOWORK=$GITHUB_WORKSPACE/olake/go.work" >> $GITHUB_ENV
-
       - name: Run Tests
         run: |
           go test -v ./types -run TestGetWrappedCatalog
