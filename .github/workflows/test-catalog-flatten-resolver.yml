@@ -65,7 +65,7 @@ jobs:
         run: go test -v ./types -run TestGetWrappedCatalog
 
       - name: Run Flatten Tests
-          go test -v ./typeutils -run TestFlattener
+        run: go test -v ./typeutils -run TestFlattener
 
-      -name: Run Resolve Tests
-          go test -v ./typeutils -run TestResolve
+      - name: Run Resolve Tests
+        run: go test -v ./typeutils -run TestResolve
