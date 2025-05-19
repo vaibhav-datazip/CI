@@ -28,3 +28,5 @@ jobs:
 
       - name: Run Resolve Tests
         run: go test -v ./typeutils -run TestResolve
+
+# check
