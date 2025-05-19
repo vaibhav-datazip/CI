@@ -24,7 +24,7 @@ jobs:
         run: go test -v ./types -run TestGetWrappedCatalog
 
       - name: Run Flatten Test
-        run: go test -v ./typeutils -run "TestFlatten|TestFlattenSchema"
+        run: go test -v ./typeutils -run "TestFlattenerFlatten|TestFlattenerImplFlatten"
 
       - name: Run Resolver Test
-        run: go test -v ./typeutils -run "TestResolver"
+        run: go test -v ./typeutils -run "TestResolve"
