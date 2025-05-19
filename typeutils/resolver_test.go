@@ -113,6 +113,7 @@ func TestResolve(t *testing.T) {
 			objects: []map[string]interface{}{
 				{
 					"int_ptr":     func() *int { v := 42; return &v }(),
+					"zero_ptr":     func() *int { v := 0; return &v }(),
 					"string_ptr":  func() *string { v := "test"; return &v }(),
 					"bool_ptr":    func() *bool { v := true; return &v }(),
 					"float64_ptr": func() *float64 { v := 3.14; return &v }(),
@@ -124,6 +125,7 @@ func TestResolve(t *testing.T) {
 				nullable bool
 			}{
 				"int_ptr":     {dataType: types.Int32, nullable: false},
+				"zero_ptr":    {dataType: types.Int32, nullable: false},
 				"string_ptr":  {dataType: types.String, nullable: false},
 				"bool_ptr":    {dataType: types.Bool, nullable: false},
 				"float64_ptr": {dataType: types.Float64, nullable: false},
