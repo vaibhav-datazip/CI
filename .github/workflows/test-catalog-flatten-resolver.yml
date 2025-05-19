@@ -61,8 +61,11 @@ jobs:
             exit 1
           fi
 
-      - name: Run Tests
-        run: |
-          go test -v ./types -run TestGetWrappedCatalog
-          go test -v ./typeutils -run "TestFlattenerFlatten|TestFlattenerImplFlatten"
-          go test -v ./typeutils -run "TestResolve|TestResolveWithEmptyInput"
+      - name: Run Catalog Tests
+        run: go test -v ./types -run TestGetWrappedCatalog
+
+      - name: Run Flatten Tests
+          go test -v ./typeutils -run TestFlattener
+
+      -name: Run Resolve Tests
+          go test -v ./typeutils -run TestResolve
