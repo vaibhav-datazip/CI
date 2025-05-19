@@ -14,32 +14,52 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+          lfs: true
 
       - uses: actions/setup-go@v3
         with:
           check-latest: true
           go-version: 1.23.x
 
-      - name: Debug - List Directory
-        run: ls -la
-
-      - name: Debug - Show Go Environment
+      - name: Debug - Show Environment
         run: |
+          pwd
+          echo "GITHUB_WORKSPACE: $GITHUB_WORKSPACE"
           go version
           go env
-          ls -la ./types
-          ls -la ./typeutils
+          find . -name "*_test.go"
+
+      - name: Verify Test Files
+        run: |
+          if [ ! -f "types/catalog_test.go" ]; then
+            echo "Error: types/catalog_test.go is missing"
+            exit 1
+          fi
+          if [ ! -f "typeutils/flatten_test.go" ]; then
+            echo "Error: typeutils/flatten_test.go is missing"
+            exit 1
+          fi
+          if [ ! -f "typeutils/resolver_test.go" ]; then
+            echo "Error: typeutils/resolver_test.go is missing"
+            exit 1
+          fi
+
+      - name: Setup Go Environment
+        run: |
+          echo "GOPATH=$GITHUB_WORKSPACE/go" >> $GITHUB_ENV
+          echo "GOBIN=$GITHUB_WORKSPACE/go/bin" >> $GITHUB_ENV
+          echo "GOMOD=$GITHUB_WORKSPACE/go.mod" >> $GITHUB_ENV
+          echo "GOWORK=$GITHUB_WORKSPACE/go.work" >> $GITHUB_ENV
 
       - name: Download Dependencies
         run: |
           go mod download
           go mod tidy
 
-      - name: Run Catalog Test
-        run: go test -v ./types -run TestGetWrappedCatalog
-
-      - name: Run Flatten Test
-        run: go test -v ./typeutils -run "TestFlattenerFlatten|TestFlattenerImplFlatten"
-
-      - name: Run Resolver Test
-        run: go test -v ./typeutils -run "TestResolve|TestResolveWithEmptyInput"
+      - name: Run Tests
+        run: |
+          go test -v ./types -run TestGetWrappedCatalog
+          go test -v ./typeutils -run "TestFlattenerFlatten|TestFlattenerImplFlatten"
+          go test -v ./typeutils -run "TestResolve|TestResolveWithEmptyInput"
