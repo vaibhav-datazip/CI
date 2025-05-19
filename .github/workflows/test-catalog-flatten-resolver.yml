@@ -14,9 +14,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-        with:
-          fetch-depth: 1
-          lfs: true
 
       - uses: actions/setup-go@v3
         with:
@@ -30,7 +27,23 @@ jobs:
           go version
           go env
           find . -name "*_test.go"
-
+      
+      - name: Debug - Check and Print 'types' Folder Path
+        run: |
+          echo "Current working directory: $(pwd)"
+            
+          if [ -d "types" ]; then
+            echo "'types' directory exists at:"
+            realpath types
+            echo "Contents of 'types' directory:"
+            ls -l types
+          else
+            echo "❌ 'types' directory does NOT exist."
+            echo "Listing current directory:"
+            ls -l
+            exit 1
+          fi    
+        
       - name: Verify Test Files
         run: |
           if [ ! -f "types/catalog_test.go" ]; then
