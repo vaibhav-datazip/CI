@@ -7,6 +7,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+// test
+
 func TestGetWrappedCatalog(t *testing.T) {
 	testCases := []struct {
 		name     string
