@@ -1,9 +1,6 @@
 name: Draft Release Approval
 # test 2
 on:
-  pull_request:
-    branches:
-    - staging
   release:
     types: [published]
   workflow_dispatch:
@@ -17,7 +14,7 @@ on:
 
 jobs:
   build_all_drivers:
-    if: github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/staging') || github.event.pull_request.base.ref == 'staging'
+    if: github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/staging')
     name: Build and Release Drivers
     runs-on: ubuntu-latest
     strategy:
@@ -35,6 +32,40 @@ jobs:
         with:
           fetch-depth: 0
           
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          
+      - name: Show directory structure
+        run: |
+          echo "Current directory structure:"
+          ls -R writers/
+          
+      - name: Build JAR
+        run: |
+          echo "Current directory: $(pwd)"
+          cd writers/iceberg/debezium-server-iceberg-sink
+          echo "Building in directory: $(pwd)"
+          ls -la
+          ./mvnw clean package -DskipTests
+          echo "After build, directory contents:"
+          ls -la target/
+          
+      - name: Verify JAR exists
+        run: |
+          JAR_PATH="writers/iceberg/debezium-server-iceberg-sink/target/debezium-server-iceberg-sink-0.0.1-SNAPSHOT.jar"
+          echo "Looking for JAR at: $JAR_PATH"
+          if [ ! -f "$JAR_PATH" ]; then
+            echo "Error: JAR file not found at $JAR_PATH"
+            echo "Directory contents:"
+            ls -R writers/iceberg/debezium-server-iceberg-sink/target/
+            exit 1
+          fi
+          echo "JAR file found successfully at $JAR_PATH"
+          ls -l "$JAR_PATH"
+          
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
         
@@ -49,6 +80,14 @@ jobs:
         
       - name: Set VERSION
         run: echo "VERSION=${{ env.VERSION }}" >> $GITHUB_ENV
+        
+      - name: Validate VERSION
+        run: |
+          if [ -z "$VERSION" ]; then
+            echo "Error: VERSION is empty"
+            exit 1
+          fi
+          echo "Using version: $VERSION"
         
       - name: Show VERSION
         run: echo "Building driver $DRIVER with version $VERSION"
