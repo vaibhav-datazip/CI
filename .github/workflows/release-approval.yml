@@ -15,6 +15,12 @@ on:
         description: "Version to release"
         required: true
 
+# Add permissions block
+permissions:
+  actions: write    # Required for workflow dispatch
+  contents: read    # Required for checkout
+  pull-requests: write # Required for PR events
+
 jobs:
   build_all_drivers:
     if: github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/staging') || github.event.pull_request.base.ref == 'staging'
@@ -28,6 +34,7 @@ jobs:
         if: matrix.driver == 'mongodb'
         uses: actions/github-script@v6
         with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             await github.rest.actions.createWorkflowDispatch({
               owner: context.repo.owner,
@@ -44,6 +51,7 @@ jobs:
         if: matrix.driver == 'postgresql'
         uses: actions/github-script@v6
         with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             await github.rest.actions.createWorkflowDispatch({
               owner: context.repo.owner,
@@ -60,6 +68,7 @@ jobs:
         if: matrix.driver == 'mysql'
         uses: actions/github-script@v6
         with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             await github.rest.actions.createWorkflowDispatch({
               owner: context.repo.owner,
