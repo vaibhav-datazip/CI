@@ -37,24 +37,22 @@ jobs:
             version=${LATEST_TAG#v}
             echo "Debug: Version without 'v' = $version"
             
-            IFS='.' read -ra VERSION_PARTS <<< "$version"
-            echo "Debug: Version parts = ${VERSION_PARTS[@]}"
-            echo "Debug: Number of parts = ${#VERSION_PARTS[@]}"
+            # Split version into parts and convert to integers
+            major=$(printf "%d" $(echo $version | cut -d. -f1))
+            minor=$(printf "%d" $(echo $version | cut -d. -f2))
+            patch=$(printf "%d" $(echo $version | cut -d. -f3))
             
-            # Check if we have all three version parts
-            if [ ${#VERSION_PARTS[@]} -eq 3 ]; then
-              echo "Debug: Valid version format, incrementing patch"
-              # Increment the last number (patch version) using let
-              let "VERSION_PARTS[2]++"
-              echo "Debug: After increment = ${VERSION_PARTS[2]}"
-              # Reconstruct the version with 'v' prefix
-              next_version="v${VERSION_PARTS[0]}.${VERSION_PARTS[1]}.${VERSION_PARTS[2]}"
-              echo "Debug: Next version = $next_version"
-            else
-              echo "Debug: Invalid version format, using v0.0.0"
-              next_version="v0.0.0"
-            fi
+            echo "Debug: Version parts (as integers) = $major $minor $patch"
+            
+            # Increment patch version
+            patch=$((patch + 1))
+            echo "Debug: After increment = $patch"
+            
+            # Create next version
+            next_version="v$major.$minor.$patch"
+            echo "Debug: Next version = $next_version"
           fi
+          
           echo "Debug: Final next_version = $next_version"
           echo "NEXT_VERSION=$next_version" >> $GITHUB_ENV
 
