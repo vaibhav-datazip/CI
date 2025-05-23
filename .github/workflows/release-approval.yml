@@ -29,6 +29,8 @@ jobs:
     strategy:
       matrix:
         driver: [mongodb, postgresql, mysql]
+    env:
+      DEFAULT_VERSION: v0.0.3
     steps:
       - name: Build MongoDB Driver
         if: matrix.driver == 'mongodb'
@@ -43,7 +45,7 @@ jobs:
               ref: 'master',
               inputs: {
                 driver: 'mongodb',
-                version: '${{ github.event.inputs.version || github.event.release.tag_name }}'
+                version: '${{ github.event.inputs.version || github.event.release.tag_name || env.DEFAULT_VERSION }}'
               }
             })
 
@@ -60,7 +62,7 @@ jobs:
               ref: 'master',
               inputs: {
                 driver: 'postgresql',
-                version: '${{ github.event.inputs.version || github.event.release.tag_name }}'
+                version: '${{ github.event.inputs.version || github.event.release.tag_name || env.DEFAULT_VERSION }}'
               }
             })
 
@@ -77,6 +79,6 @@ jobs:
               ref: 'master',
               inputs: {
                 driver: 'mysql',
-                version: '${{ github.event.inputs.version || github.event.release.tag_name }}'
+                version: '${{ github.event.inputs.version || github.event.release.tag_name || env.DEFAULT_VERSION }}'
               }
             })
