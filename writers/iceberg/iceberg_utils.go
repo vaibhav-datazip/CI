@@ -117,7 +117,7 @@ func findAvailablePort(serverHost string) (int, error) {
 		// Try to store port in map - returns false if already exists
 		if _, loaded := portMap.LoadOrStore(p, true); !loaded {
 			// Check if the port is already in use by another process
-			conn, err := net.DialTimeout("tcp", net.JoinHostPort(serverHost, strconv.Itoa(p)), time.Second)
+			conn, err := net.DialTimeout("tcp", fmt.Sprintf("%s:%d", serverHost, p), time.Second)
 			if err == nil {
 				// Port is in use, close our test connection
 				conn.Close()
@@ -390,7 +390,7 @@ func (i *Iceberg) SetupIcebergClient(upsert bool) error {
 func getTestDebeziumRecord() string {
 	randomID := utils.ULID()
 	return `{
-			"destination_table": "olake_test_table_gdgw8",
+			"destination_table": "olake_test_table",
 			"key": {
 				"schema" : {
 						"type" : "struct",
