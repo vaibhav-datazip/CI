@@ -41,7 +41,7 @@ jobs:
             IFS='.' read -ra VERSION_PARTS <<< "$version"
             echo "Debug: Version parts array (before conversion) = ${VERSION_PARTS[@]}"
             echo "Debug: Array type before conversion: $(declare -p VERSION_PARTS)"
-
+            
             # Try to increment without conversion
             echo "Debug: Trying increment without conversion:"
             echo "Debug: VERSION_PARTS[2] + 1 = $((VERSION_PARTS[2] + 1))"
@@ -54,12 +54,12 @@ jobs:
             echo "Debug: Version parts array (after conversion) = ${VERSION_PARTS[@]}"
             echo "Debug: Array type after conversion: $(declare -p VERSION_PARTS)"
             
-            # Try to increment without conversion
+            # Try to increment with conversion
             echo "Debug: Trying increment with conversion:"
             echo "Debug: VERSION_PARTS[2] + 1 = $((VERSION_PARTS[2] + 1))"
             
-            # Increment the last number (patch version)
-            ((VERSION_PARTS[2]++))
+            # Increment the last number (patch version) using a different approach
+            VERSION_PARTS[2]=$((VERSION_PARTS[2] + 1))
             echo "Debug: After increment = ${VERSION_PARTS[2]}"
             
             # Reconstruct the version with 'v' prefix
