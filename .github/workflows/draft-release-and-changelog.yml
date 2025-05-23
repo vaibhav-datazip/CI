@@ -37,12 +37,25 @@ jobs:
             version=${LATEST_TAG#v}
             echo "Debug: Version without 'v' = $version"
             
-            # Split version into parts and convert to integers
-            major=$(printf "%d" $(echo $version | cut -d. -f1))
-            minor=$(printf "%d" $(echo $version | cut -d. -f2))
-            patch=$(printf "%d" $(echo $version | cut -d. -f3))
+            # Get raw version parts first
+            raw_major=$(echo $version | cut -d. -f1)
+            raw_minor=$(echo $version | cut -d. -f2)
+            raw_patch=$(echo $version | cut -d. -f3)
             
-            echo "Debug: Version parts (as integers) = $major $minor $patch"
+            echo "Debug: Raw version parts = $raw_major $raw_minor $raw_patch"
+            echo "Debug: Raw patch type: $(declare -p raw_patch)"
+            
+            # Try increment without conversion
+            echo "Debug: Trying increment without conversion:"
+            echo "Debug: raw_patch + 1 = $((raw_patch + 1))"
+            
+            # Now convert to integers
+            major=$(printf "%d" $raw_major)
+            minor=$(printf "%d" $raw_minor)
+            patch=$(printf "%d" $raw_patch)
+            
+            echo "Debug: Converted version parts = $major $minor $patch"
+            echo "Debug: Converted patch type: $(declare -p patch)"
             
             # Increment patch version
             patch=$((patch + 1))
