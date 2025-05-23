@@ -26,7 +26,7 @@ jobs:
     env:
       DOCKER_LOGIN: ${{ secrets.DOCKER_USERNAME }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-      DHID: ${{ secrets.DOCKER_REPO || 'olakego' }}
+      DHID: ${{ secrets.DOCKER_REPO || 'olake' }}
       DRIVER: ${{ github.event.inputs.driver || matrix.driver }}
       VERSION: ${{'v0.0.3'}}
     steps:
@@ -77,6 +77,13 @@ jobs:
         with:
           username: ${{ env.DOCKER_LOGIN }}
           password: ${{ env.DOCKER_PASSWORD }}
+          
+      - name: Verify Docker Hub Access
+        run: |
+          echo "Verifying Docker Hub access..."
+          echo "Username: $DOCKER_LOGIN"
+          echo "Repository: $DHID/source-$DRIVER"
+          docker manifest inspect $DHID/source-$DRIVER:$VERSION || true
           
       - name: Set Driver 
         run: echo "DRIVER=${{ env.DRIVER }}" >> $GITHUB_ENV
