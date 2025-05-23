@@ -35,8 +35,9 @@ jobs:
             IFS='.' read -ra VERSION_PARTS <<< "$version"
             
             # Increment the last number (patch version)
-            VERSION_PARTS[2]=$((VERSION_PARTS[2] + 1))
-            
+            echo "Debug: VERSION_PARTS[2] = ${VERSION_PARTS[2]}"
+            ((VERSION_PARTS[2]++))
+            echo "Debug: VERSION_PARTS[2] after increment = ${VERSION_PARTS[2]}"
             # Reconstruct the version with 'v' prefix
             next_version="v${VERSION_PARTS[0]}.${VERSION_PARTS[1]}.${VERSION_PARTS[2]}"
           fi
