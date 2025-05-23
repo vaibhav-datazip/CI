@@ -52,7 +52,7 @@ jobs:
           cd writers/iceberg/debezium-server-iceberg-sink
           echo "Building in directory: $(pwd)"
           ls -la
-          ./mvnw clean package -DskipTests
+          mvn clean package -DskipTests
           echo "After build, directory contents:"
           ls -la target/
           
