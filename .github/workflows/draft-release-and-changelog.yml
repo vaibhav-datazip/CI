@@ -2,12 +2,13 @@ name: Olake Draft Release and Changelog
 
 on:
   pull_request:
+    types: [closed]
     branches:
-    - staging
+    - master
 
 jobs:
   create_draft_release:
-    if: github.event.pull_request.base.ref == 'staging'
+    if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'master' && github.event.pull_request.head.ref == 'staging'
     name: Create Draft Release
     runs-on: ubuntu-latest
     permissions:
@@ -37,32 +38,33 @@ jobs:
             version=${LATEST_TAG#v}
             echo "Debug: Version without 'v' = $version"
             
-            # Get raw version parts first
-            raw_major=$(echo $version | cut -d. -f1)
-            raw_minor=$(echo $version | cut -d. -f2)
-            raw_patch=$(echo $version | cut -d. -f3)
-            
-            echo "Debug: Raw version parts = $raw_major $raw_minor $raw_patch"
-            echo "Debug: Raw patch type: $(declare -p raw_patch)"
-            
-            # Try increment without conversion
+            # Split into array using IFS
+            IFS='.' read -ra VERSION_PARTS <<< "$version"
+            echo "Debug: Version parts array (before conversion) = ${VERSION_PARTS[@]}"
+            echo "Debug: Array type before conversion: $(declare -p VERSION_PARTS)"
+
+            # Try to increment without conversion
             echo "Debug: Trying increment without conversion:"
-            echo "Debug: raw_patch + 1 = $((raw_patch + 1))"
+            echo "Debug: VERSION_PARTS[2] + 1 = $((VERSION_PARTS[2] + 1))"
             
-            # Now convert to integers
-            major=$(printf "%d" $raw_major)
-            minor=$(printf "%d" $raw_minor)
-            patch=$(printf "%d" $raw_patch)
+            # Convert array elements to integers
+            VERSION_PARTS[0]=$(printf "%d" ${VERSION_PARTS[0]})
+            VERSION_PARTS[1]=$(printf "%d" ${VERSION_PARTS[1]})
+            VERSION_PARTS[2]=$(printf "%d" ${VERSION_PARTS[2]})
             
-            echo "Debug: Converted version parts = $major $minor $patch"
-            echo "Debug: Converted patch type: $(declare -p patch)"
+            echo "Debug: Version parts array (after conversion) = ${VERSION_PARTS[@]}"
+            echo "Debug: Array type after conversion: $(declare -p VERSION_PARTS)"
             
-            # Increment patch version
-            patch=$((patch + 1))
-            echo "Debug: After increment = $patch"
+            # Try to increment without conversion
+            echo "Debug: Trying increment with conversion:"
+            echo "Debug: VERSION_PARTS[2] + 1 = $((VERSION_PARTS[2] + 1))"
             
-            # Create next version
-            next_version="v$major.$minor.$patch"
+            # Increment the last number (patch version)
+            ((VERSION_PARTS[2]++))
+            echo "Debug: After increment = ${VERSION_PARTS[2]}"
+            
+            # Reconstruct the version with 'v' prefix
+            next_version="v${VERSION_PARTS[0]}.${VERSION_PARTS[1]}.${VERSION_PARTS[2]}"
             echo "Debug: Next version = $next_version"
           fi
           
