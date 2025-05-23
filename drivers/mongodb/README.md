@@ -15,7 +15,7 @@ The MongoDB Driver enables data synchronization from MongoDB to your desired des
 To run the MongoDB Driver, configure the following files with your specific credentials and settings:
 
 - **`config.json`**: MongoDB connection details.  
-- **`streams.json`**: List of collections and fields to sync (generated using the *Discover* command).  
+- **`catalog.json`**: List of collections and fields to sync (generated using the *Discover* command).  
 - **`write.json`**: Configuration for the destination where the data will be written.
 
 Place these files in your project directory before running the commands.
@@ -46,7 +46,7 @@ Add MongoDB credentials in following format in `config.json` file. To check more
 
 ## Commands
 ### Discover Command
-The *Discover* command generates json content for `streams.json` file, which defines the schema of the collections to be synced.
+The *Discover* command generates json content for `catalog.json` file, which defines the schema of the collections to be synced.
 
 #### Usage
 To run the Discover command, use the following syntax
@@ -64,8 +64,7 @@ After executing the Discover command, a formatted response will look like this:
          "namespace": [
                {
                   "partition_regex": "",
-                  "stream_name": "incr",
-                  "normalization": false
+                  "stream_name": "incr"
                }
          ]
       },
@@ -82,8 +81,8 @@ After executing the Discover command, a formatted response will look like this:
 }
 ```
 
-#### Configure Streams
-Before running the Sync command, the generated `streams.json` file must be configured. Follow these steps:
+#### Configure Catalog
+Before running the Sync command, the generated `catalog.json` file must be configured. Follow these steps:
 - Remove Unnecessary Streams:<br>
    Remove streams from selected streams.
 - Add Partition based on Column Value
@@ -99,16 +98,14 @@ Before running the Sync command, the generated `streams.json` file must be confi
       ```json
       "cursor_field": "<cursor field from available_cursor_fields>"
       ```
-- Final Streams Example
-<br> `normalization` determines that level 1 flattening is required. <br>
+- Final Catalog Example
    ```json
    {
       "selected_streams": {
          "namespace": [
                {
                   "partition_regex": "",
-                  "stream_name": "incr",
-                  "normalization": false
+                  "stream_name": "incr"
                }
          ]
       },
@@ -130,11 +127,13 @@ Before running the Sync command, the generated `streams.json` file must be confi
 
 ### Writer File 
 The Writer file defines the configuration for the destination where data needs to be added.<br>
+`normalization` determine that Level 1 flattening is required. <br>
 Example (For Local):
    ```
    {
       "type": "PARQUET",
       "writer": {
+         "normalization":true,
          "local_path": "./examples/reader"
       }
    }
@@ -144,6 +143,7 @@ Example (For S3):
    {
       "type": "PARQUET",
       "writer": {
+         "normalization":false,
          "s3_bucket": "olake",  
          "s3_region": "",
          "s3_access_key": "", 
@@ -158,6 +158,7 @@ Example (For AWS S3 + Glue Configuration)
   {
       "type": "ICEBERG",
       "writer": {
+        "normalization": false,
         "s3_path": "s3://{bucket_name}/{path_prefix}/",
         "aws_region": "ap-south-1",
         "aws_access_key": "XXX",
@@ -178,6 +179,7 @@ Example (Local Test Configuration (JDBC + Minio))
       "jdbc_url": "jdbc:postgresql://localhost:5432/iceberg",
       "jdbc_username": "iceberg",
       "jdbc_password": "password",
+      "normalization": false,
       "iceberg_s3_path": "s3a://warehouse",
       "s3_endpoint": "http://localhost:9000",
       "s3_use_ssl": false,
@@ -195,12 +197,12 @@ For Detailed overview check [here.](https://olake.io/docs/category/destinations-
 The *Sync* command fetches data from MongoDB and ingests it into the destination.
 
 ```bash
-./build.sh driver-mongodb sync --config /mongodb/examples/config.json --catalog /mongodb/examples/streams.json --destination /mongodb/examples/write.json
+./build.sh driver-mongodb sync --config /mongodb/examples/config.json --catalog /mongodb/examples/catalog.json --destination /mongodb/examples/write.json
 ```
 
 To run sync with state 
 ```bash
-./build.sh driver-mongodb sync --config /mongodb/examples/config.json --catalog /mongodb/examples/streams.json --destination /mongodb/examples/write.json --state /mongodb/examples/state.json
+./build.sh driver-mongodb sync --config /mongodb/examples/config.json --catalog /mongodb/examples/catalog.json --destination /mongodb/examples/write.json --state /mongodb/examples/state.json
 ```
 
 

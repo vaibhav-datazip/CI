@@ -8,11 +8,11 @@ on:
      - '**'
     types: [opened, synchronize, reopened]
 
-  # check 2
+  # check 1
 
 jobs:
   performance-test:
-    if: github.base_ref == 'master' && github.head_ref == 'staging'
+    if: github.base_ref == 'main' && github.head_ref == 'staging'
     runs-on: ubuntu-latest
 
     steps:

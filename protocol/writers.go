@@ -126,7 +126,6 @@ func (w *WriterPool) NewThread(parent context.Context, stream Stream, options ..
 
 	normalizeFunc := func(rawRecord types.RawRecord) (types.Record, error) {
 		flattenedData, err := thread.Flattener()(rawRecord.Data) // flatten the record first
-		logger.Debugf("flattenedData: %v", flattenedData)
 		if err != nil {
 			return nil, err
 		}
@@ -186,7 +185,7 @@ func (w *WriterPool) NewThread(parent context.Context, stream Stream, options ..
 						//TODO: we need to capture error on thread.Close()
 
 						// check for normalization
-						if stream.NormalizationEnabled() {
+						if thread.Normalization() {
 							normalizedData, err := normalizeFunc(record)
 							if err != nil {
 								return err
