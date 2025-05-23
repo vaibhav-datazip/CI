@@ -27,19 +27,35 @@ jobs:
       - name: Generate next version
         id: generate-next-version
         run: |
+          echo "Debug: LATEST_TAG = $LATEST_TAG"
+          
           if [ -z "$LATEST_TAG" ]; then
+            echo "Debug: No latest tag found, using v0.0.0"
             next_version="v0.0.0"
           else
             # Remove 'v' prefix and split version into array
             version=${LATEST_TAG#v}
+            echo "Debug: Version without 'v' = $version"
+            
             IFS='.' read -ra VERSION_PARTS <<< "$version"
+            echo "Debug: Version parts = ${VERSION_PARTS[@]}"
+            echo "Debug: Number of parts = ${#VERSION_PARTS[@]}"
             
-            # Increment the last number (patch version)
-            ((VERSION_PARTS[2]++))
-            
-            # Reconstruct the version with 'v' prefix
-            next_version="v${VERSION_PARTS[0]}.${VERSION_PARTS[1]}.${VERSION_PARTS[2]}"
+            # Check if we have all three version parts
+            if [ ${#VERSION_PARTS[@]} -eq 3 ]; then
+              echo "Debug: Valid version format, incrementing patch"
+              # Increment the last number (patch version)
+              ((VERSION_PARTS[2]++))
+              echo "Debug: After increment = ${VERSION_PARTS[2]}"
+              # Reconstruct the version with 'v' prefix
+              next_version="v${VERSION_PARTS[0]}.${VERSION_PARTS[1]}.${VERSION_PARTS[2]}"
+              echo "Debug: Next version = $next_version"
+            else
+              echo "Debug: Invalid version format, using v0.0.0"
+              next_version="v0.0.0"
+            fi
           fi
+          echo "Debug: Final next_version = $next_version"
           echo "NEXT_VERSION=$next_version" >> $GITHUB_ENV
 
       - name: Create draft release
