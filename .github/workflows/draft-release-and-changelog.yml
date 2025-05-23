@@ -27,47 +27,19 @@ jobs:
       - name: Generate next version
         id: generate-next-version
         run: |
-          echo "Debug: LATEST_TAG = $LATEST_TAG"
-          
           if [ -z "$LATEST_TAG" ]; then
-            echo "Debug: No latest tag found, using v0.0.0"
             next_version="v0.0.0"
           else
             # Remove 'v' prefix and split version into array
             version=${LATEST_TAG#v}
-            echo "Debug: Version without 'v' = $version"
-            
-            # Split into array using IFS
             IFS='.' read -ra VERSION_PARTS <<< "$version"
-            echo "Debug: Version parts array (before conversion) = ${VERSION_PARTS[@]}"
-            echo "Debug: Array type before conversion: $(declare -p VERSION_PARTS)"
             
-            # Try to increment without conversion
-            echo "Debug: Trying increment without conversion:"
-            echo "Debug: VERSION_PARTS[2] + 1 = $((VERSION_PARTS[2] + 1))"
-            
-            # Convert array elements to integers
-            VERSION_PARTS[0]=$(printf "%d" ${VERSION_PARTS[0]})
-            VERSION_PARTS[1]=$(printf "%d" ${VERSION_PARTS[1]})
-            VERSION_PARTS[2]=$(printf "%d" ${VERSION_PARTS[2]})
-            
-            echo "Debug: Version parts array (after conversion) = ${VERSION_PARTS[@]}"
-            echo "Debug: Array type after conversion: $(declare -p VERSION_PARTS)"
-            
-            # Try to increment with conversion
-            echo "Debug: Trying increment with conversion:"
-            echo "Debug: VERSION_PARTS[2] + 1 = $((VERSION_PARTS[2] + 1))"
-            
-            # Increment the last number (patch version) using a different approach
+            # Increment the last number (patch version)
             VERSION_PARTS[2]=$((VERSION_PARTS[2] + 1))
-            echo "Debug: After increment = ${VERSION_PARTS[2]}"
             
             # Reconstruct the version with 'v' prefix
             next_version="v${VERSION_PARTS[0]}.${VERSION_PARTS[1]}.${VERSION_PARTS[2]}"
-            echo "Debug: Next version = $next_version"
           fi
-          
-          echo "Debug: Final next_version = $next_version"
           echo "NEXT_VERSION=$next_version" >> $GITHUB_ENV
 
       - name: Create draft release
