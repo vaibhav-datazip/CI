@@ -1,5 +1,5 @@
 name: Draft Release Approval
-# test 2
+
 on:
   pull_request:
     branches:
@@ -22,94 +22,52 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        driver: [mongodb] # Add new drivers here as they become available
-    env:
-      DOCKER_LOGIN: ${{ secrets.DOCKER_USERNAME }}
-      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-      DHID: ${{ secrets.DOCKER_REPO || 'olake' }}
-      DRIVER: ${{ github.event.inputs.driver || matrix.driver }}
-      VERSION: ${{'v0.0.3'}}
+        driver: [mongodb, postgresql, mysql]
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - name: Build MongoDB Driver
+        if: matrix.driver == 'mongodb'
+        uses: actions/github-script@v6
         with:
-          fetch-depth: 0
-          
-      - name: Set up JDK
-        uses: actions/setup-java@v3
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: 'build-and-release-driver.yml',
+              ref: 'master',
+              inputs: {
+                driver: 'mongodb',
+                version: '${{ github.event.inputs.version || github.event.release.tag_name }}'
+              }
+            })
+
+      - name: Build PostgreSQL Driver
+        if: matrix.driver == 'postgresql'
+        uses: actions/github-script@v6
         with:
-          distribution: 'temurin'
-          java-version: '17'
-          
-      - name: Show directory structure
-        run: |
-          echo "Current directory structure:"
-          ls -R writers/
-          
-      - name: Build JAR
-        run: |
-          echo "Current directory: $(pwd)"
-          cd writers/iceberg/debezium-server-iceberg-sink
-          echo "Building in directory: $(pwd)"
-          ls -la
-          mvn clean package -DskipTests
-          echo "After build, directory contents:"
-          ls -la target/
-          
-      - name: Verify JAR exists
-        run: |
-          JAR_PATH="writers/iceberg/debezium-server-iceberg-sink/target/debezium-server-iceberg-sink-0.0.1-SNAPSHOT.jar"
-          echo "Looking for JAR at: $JAR_PATH"
-          if [ ! -f "$JAR_PATH" ]; then
-            echo "Error: JAR file not found at $JAR_PATH"
-            echo "Directory contents:"
-            ls -R writers/iceberg/debezium-server-iceberg-sink/target/
-            exit 1
-          fi
-          echo "JAR file found successfully at $JAR_PATH"
-          ls -l "$JAR_PATH"
-          
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-        
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: 'build-and-release-driver.yml',
+              ref: 'master',
+              inputs: {
+                driver: 'postgresql',
+                version: '${{ github.event.inputs.version || github.event.release.tag_name }}'
+              }
+            })
+
+      - name: Build MySQL Driver
+        if: matrix.driver == 'mysql'
+        uses: actions/github-script@v6
         with:
-          username: ${{ env.DOCKER_LOGIN }}
-          password: ${{ env.DOCKER_PASSWORD }}
-          
-      - name: Verify Docker Hub Access
-        run: |
-          echo "Verifying Docker Hub access..."
-          echo "Username: $DOCKER_LOGIN"
-          echo "Repository: $DHID/source-$DRIVER"
-          docker manifest inspect $DHID/source-$DRIVER:$VERSION || true
-          
-      - name: Set Driver 
-        run: echo "DRIVER=${{ env.DRIVER }}" >> $GITHUB_ENV
-        
-      - name: Set VERSION
-        run: echo "VERSION=${{ env.VERSION }}" >> $GITHUB_ENV
-        
-      - name: Validate VERSION
-        run: |
-          if [ -z "$VERSION" ]; then
-            echo "Error: VERSION is empty"
-            exit 1
-          fi
-          echo "Using version: $VERSION"
-        
-      - name: Show VERSION
-        run: echo "Building driver $DRIVER with version $VERSION"
-        
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          push: true
-          build-args: |
-            DRIVER_NAME=${{ env.DRIVER }}
-            DRIVER_VERSION=${{ env.VERSION }}
-          tags: |
-            ${{ env.DHID }}/source-${{ env.DRIVER }}:${{ env.VERSION }}
-          platforms: linux/amd64,linux/arm64
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: 'build-and-release-driver.yml',
+              ref: 'master',
+              inputs: {
+                driver: 'mysql',
+                version: '${{ github.event.inputs.version || github.event.release.tag_name }}'
+              }
+            })
