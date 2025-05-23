@@ -44,8 +44,8 @@ jobs:
             # Check if we have all three version parts
             if [ ${#VERSION_PARTS[@]} -eq 3 ]; then
               echo "Debug: Valid version format, incrementing patch"
-              # Increment the last number (patch version)
-              ((VERSION_PARTS[2]++))
+              # Increment the last number (patch version) using let
+              let "VERSION_PARTS[2]++"
               echo "Debug: After increment = ${VERSION_PARTS[2]}"
               # Reconstruct the version with 'v' prefix
               next_version="v${VERSION_PARTS[0]}.${VERSION_PARTS[1]}.${VERSION_PARTS[2]}"
