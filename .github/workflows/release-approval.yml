@@ -1,6 +1,9 @@
 name: Draft Release Approval
-# test 1
+# test 2
 on:
+  pull_request:
+    branches:
+    - staging
   release:
     types: [published]
   workflow_dispatch:
@@ -14,7 +17,7 @@ on:
 
 jobs:
   build_all_drivers:
-    if: github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/staging')
+    if: github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/staging') || github.event.pull_request.base.ref == 'staging'
     name: Build and Release Drivers
     runs-on: ubuntu-latest
     strategy:
