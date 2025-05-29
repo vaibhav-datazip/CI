@@ -3,7 +3,7 @@ name: Draft Release Approval
 on:
   pull_request:
     branches:
-    - staging
+      - staging
   release:
     types: [published]
   workflow_dispatch:
@@ -15,70 +15,16 @@ on:
         description: "Version to release"
         required: true
 
-# Add permissions block
-permissions:
-  actions: write    # Required for workflow dispatch
-  contents: read    # Required for checkout
-  pull-requests: write # Required for PR events
-
 jobs:
   build_all_drivers:
-    if: github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/staging') || github.event.pull_request.base.ref == 'staging'
+    if: github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/master') || github.event.pull_request.base.ref == 'staging'
     name: Build and Release Drivers
-    runs-on: ubuntu-latest
+    
     strategy:
       matrix:
-        driver: [mongodb, postgresql, mysql]
-    env:
-      DEFAULT_VERSION: v0.0.3
-    steps:
-      - name: Build MongoDB Driver
-        if: matrix.driver == 'mongodb'
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            await github.rest.actions.createWorkflowDispatch({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              workflow_id: 'build-and-release-driver.yml',
-              ref: 'master',
-              inputs: {
-                driver: 'mongodb',
-                version: '${{ github.event.inputs.version || github.event.release.tag_name || env.DEFAULT_VERSION }}'
-              }
-            })
+        driver: [mongodb, mysql, postgres] # Add new drivers here as they become available
 
-      - name: Build PostgreSQL Driver
-        if: matrix.driver == 'postgresql'
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            await github.rest.actions.createWorkflowDispatch({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              workflow_id: 'build-and-release-driver.yml',
-              ref: 'master',
-              inputs: {
-                driver: 'postgresql',
-                version: '${{ github.event.inputs.version || github.event.release.tag_name || env.DEFAULT_VERSION }}'
-              }
-            })
-
-      - name: Build MySQL Driver
-        if: matrix.driver == 'mysql'
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            await github.rest.actions.createWorkflowDispatch({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              workflow_id: 'build-and-release-driver.yml',
-              ref: 'master',
-              inputs: {
-                driver: 'mysql',
-                version: '${{ github.event.inputs.version || github.event.release.tag_name || env.DEFAULT_VERSION }}'
-              }
-            })
+    uses: ./.github/workflows/build-and-release-driver.yml
+    with:
+      driver: ${{ github.event.inputs.driver || matrix.driver }}
+      version: ${{ github.event.inputs.version || github.event.release.tag_name }}
