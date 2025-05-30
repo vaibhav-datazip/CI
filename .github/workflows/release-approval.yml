@@ -22,6 +22,7 @@ jobs:
         driver: [mongodb, mysql, postgres] # Add new drivers here as they become available
 
     uses: ./.github/workflows/build-and-release-driver.yml
+    secrets: inherit
     with:
       driver: ${{ github.event.inputs.driver || matrix.driver }}
       version: ${{ github.event.inputs.version || github.event.release.tag_name }}
