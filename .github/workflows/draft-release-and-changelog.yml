@@ -3,7 +3,7 @@ name: Olake Draft Release and Changelog
 on:
   pull_request:
     branches:
-    - staging
+      - staging
 
 jobs:
   create_draft_release:
@@ -17,13 +17,13 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      
+
       - name: Get latest release
         id: latest-release
         run: |
           latest_tag=$(git tag -l | tail -1)
           echo "LATEST_TAG=$latest_tag" >> $GITHUB_ENV
-        
+
       - name: Generate next version
         id: generate-next-version
         run: |
@@ -32,7 +32,7 @@ jobs:
           else
             # Remove 'v' prefix and split version into array
             version=${LATEST_TAG#v}
-            IFS='.' read -ra VERSION_PARTS <<< "$version"
+            IFS='.' read -ra VERSION_PARTS <<< "$version" 
             
             # Increment the last number (patch version)
             VERSION_PARTS[2]=$((VERSION_PARTS[2] + 1))
