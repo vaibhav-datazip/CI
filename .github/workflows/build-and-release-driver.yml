@@ -43,19 +43,36 @@ jobs:
           distribution: "temurin"
           cache: maven
 
+      - name: Verify Docker login
+        run: |
+          if [ -z "$DOCKER_LOGIN" ]; then
+            echo "❌ DOCKER_LOGIN is not set"
+          else
+            echo "✅ DOCKER_LOGIN is set"
+          fi
+          
+          if [ -z "$DOCKER_PASSWORD" ]; then
+            echo "❌ DOCKER_PASSWORD is not set"
+          else
+            echo "✅ DOCKER_PASSWORD is set"
+          fi
+          
+          echo "DOCKER_REPO=$DOCKER_REPO"
+          echo "DHID=$DHID"
+          echo "DRIVER=$DRIVER"
+          echo "VERSION=$VERSION"
+
       - name: Set Driver
         run: echo "DRIVER=${{ env.DRIVER }}" >> $GITHUB_ENV
+
       - name: Set VERSION
         run: echo "VERSION=${{ env.VERSION }}" >> $GITHUB_ENV
+
       - name: Show VERSION
         run: echo "Building driver $DRIVER with version $VERSION"
+
       - name: Run Release tool
         run: |
           chmod +x ./release-tool.sh
-          DOCKER_LOGIN="$DOCKER_LOGIN" \
-          DOCKER_PASSWORD="$DOCKER_PASSWORD" \
-          DHID="$DHID" \
-          DRIVER="$DRIVER" \
-          VERSION="$VERSION" \
           ./release-tool.sh
         shell: bash
