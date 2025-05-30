@@ -90,6 +90,43 @@ function release() {
     echo "$(chalk green "Release successful for $image_name version $tag_version")"
 }
 
+# Function to check required environment variables
+function check_required_env_vars() {
+    echo "Checking required environment variables..."
+    
+    if [ -z "$DOCKER_LOGIN" ]; then
+        fail "❌ DOCKER_LOGIN is not set"
+    else
+        echo "✅ DOCKER_LOGIN is set"
+    fi
+    
+    if [ -z "$DOCKER_PASSWORD" ]; then
+        fail "❌ DOCKER_PASSWORD is not set"
+    else
+        echo "✅ DOCKER_PASSWORD is set"
+    fi
+    
+    if [ -z "$DHID" ]; then
+        fail "❌ DHID is not set"
+    else
+        echo "✅ DHID is set to: $DHID"
+    fi
+    
+    if [ -z "$DRIVER" ]; then
+        fail "❌ DRIVER is not set"
+    else
+        echo "✅ DRIVER is set to: $DRIVER"
+    fi
+    
+    if [ -z "$VERSION" ]; then
+        fail "❌ VERSION is not set"
+    else
+        echo "✅ VERSION is set to: $VERSION"
+    fi
+    
+    echo "All required environment variables are set"
+}
+
 # Main script execution
 SEMVER_EXPRESSION='v([0-9]+\.[0-9]+\.[0-9]+)$'
 STAGING_VERSION_EXPRESSION='v([0-9]+\.[0-9]+\.[0-9]+)-[a-zA-Z0-9_.-]+'
@@ -101,6 +138,9 @@ echo "Fetching remote changes from git with git fetch"
 git fetch origin "$CURRENT_BRANCH" >/dev/null 2>&1
 GIT_COMMITSHA=$(git rev-parse HEAD | cut -c 1-8)
 echo "Latest commit SHA: $GIT_COMMITSHA"
+
+# Check required environment variables
+check_required_env_vars
 
 echo "Running checks..."
 
