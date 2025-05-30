@@ -27,7 +27,7 @@ jobs:
     environment: Publish Driver
     runs-on: ubuntu-latest
     env:
-      DOCKER_LOGIN: ${{ secrets.DOCKER_USERNAME || 'vbhvdz' }}
+      DOCKER_LOGIN: ${{ secrets.DOCKER_USERNAME }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
       DHID: ${{ secrets.DOCKER_REPO || 'olakego' }}
       DRIVER: ${{ inputs.driver || github.event.inputs.driver || 'mongodb' }}
@@ -42,6 +42,14 @@ jobs:
           java-version: "17"
           distribution: "temurin"
           cache: maven
+      - name: Verify Docker login
+        run: |
+          echo "DOCKER_LOGIN=$DOCKER_LOGIN"
+          echo "DOCKER_PASSWORD=$DOCKER_PASSWORD"
+          echo "DOCKER_REPO=$DOCKER_REPO"
+          echo "DHID=$DHID"
+          echo "DRIVER=$DRIVER"
+          echo "VERSION=$VERSION"
 
       - name: Set Driver
         run: echo "DRIVER=${{ env.DRIVER }}" >> $GITHUB_ENV
