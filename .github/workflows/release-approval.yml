@@ -1,9 +1,6 @@
 name: Draft Release Approval
 
 on:
-  pull_request:
-    branches:
-      - staging
   release:
     types: [published]
   workflow_dispatch:
@@ -17,7 +14,7 @@ on:
 
 jobs:
   build_all_drivers:
-    if: github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/master') || github.event.pull_request.base.ref == 'staging'
+    if: github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/master')
     name: Build and Release Drivers
     
     strategy:
