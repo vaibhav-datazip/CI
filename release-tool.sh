@@ -101,12 +101,6 @@ echo "Fetching remote changes from git with git fetch"
 git fetch origin "$CURRENT_BRANCH" >/dev/null 2>&1
 GIT_COMMITSHA=$(git rev-parse HEAD | cut -c 1-8)
 echo "Latest commit SHA: $GIT_COMMITSHA"
-# debug
-echo "Docker login: $DOCKER_LOGIN"
-echo "Docker password: $DOCKER_PASSWORD"
-echo "Docker repo: $DOCKER_REPO"
-echo "Driver: $DRIVER"
-echo "Version: $VERSION"
 
 echo "Running checks..."
 
