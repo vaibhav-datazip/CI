@@ -42,10 +42,21 @@ jobs:
           java-version: "17"
           distribution: "temurin"
           cache: maven
+
       - name: Verify Docker login
         run: |
-          echo "DOCKER_LOGIN=$DOCKER_LOGIN"
-          echo "DOCKER_PASSWORD=$DOCKER_PASSWORD"
+          if [ -z "$DOCKER_LOGIN" ]; then
+            echo "❌ DOCKER_LOGIN is not set"
+          else
+            echo "✅ DOCKER_LOGIN is set"
+          fi
+          
+          if [ -z "$DOCKER_PASSWORD" ]; then
+            echo "❌ DOCKER_PASSWORD is not set"
+          else
+            echo "✅ DOCKER_PASSWORD is set"
+          fi
+          
           echo "DOCKER_REPO=$DOCKER_REPO"
           echo "DHID=$DHID"
           echo "DRIVER=$DRIVER"
