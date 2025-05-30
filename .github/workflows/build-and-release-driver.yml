@@ -27,7 +27,7 @@ jobs:
     environment: Publish Driver
     runs-on: ubuntu-latest
     env:
-      DOCKER_LOGIN: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_LOGIN: ${{ secrets.DOCKER_USERNAME || 'vbhvdz' }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
       DHID: ${{ secrets.DOCKER_REPO || 'olakego' }}
       DRIVER: ${{ inputs.driver || github.event.inputs.driver || 'mongodb' }}
