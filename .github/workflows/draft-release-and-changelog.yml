@@ -5,7 +5,7 @@ on:
     types: [closed]
     branches:
       - master
-
+# check the version incrementer
 jobs:
   create_draft_release:
     if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'master' && github.event.pull_request.head.ref == 'staging'
