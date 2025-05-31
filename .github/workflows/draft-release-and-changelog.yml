@@ -5,7 +5,7 @@ on:
     types: [closed]
     branches:
       - master
-# check the version incrementer
+
 jobs:
   create_draft_release:
     if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'master' && github.event.pull_request.head.ref == 'staging'
@@ -22,7 +22,6 @@ jobs:
       - name: Get latest release
         id: latest-release
         run: |
-          # Sort tags by version number and get the latest
           latest_tag=$(git tag -l | sort -V | tail -1)
           echo "LATEST_TAG=$latest_tag" >> $GITHUB_ENV
 
