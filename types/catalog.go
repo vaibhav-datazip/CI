@@ -35,7 +35,6 @@ type StreamMetadata struct {
 	SplitColumn    string `json:"split_column"`
 	PartitionRegex string `json:"partition_regex"`
 	StreamName     string `json:"stream_name"`
-	Normalization  bool   `json:"normalization" default:"false"`
 }
 
 // ConfiguredCatalog is a dto for formatted airbyte catalog serialization

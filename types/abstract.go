@@ -4,6 +4,8 @@ func ToPointer[T any](val T) *T {
 	return &val
 }
 
+//  test 1
+
 const NullStruct = "github.com/datazip-inc/olake/types/Null"
 
 func Keys[T comparable](v map[T]any) []T {
