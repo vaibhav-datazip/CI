@@ -20,5 +20,3 @@ var OlakeInternalFieldsMap = map[string]bool{
 	CdcTimestamp:   true,
 	DBName:         true,
 }
-
-// test comment 
