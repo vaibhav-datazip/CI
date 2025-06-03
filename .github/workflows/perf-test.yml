@@ -3,10 +3,12 @@ name: Performance Test Postgres
 on:
   pull_request:
     branches: 
-     - main
+     - master
     paths:
      - '**'
     types: [opened, synchronize, reopened]
+
+  # check 1
 
 jobs:
   performance-test:
